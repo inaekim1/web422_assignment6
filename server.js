@@ -28,9 +28,8 @@ let strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
     // that matches the request payload data
     next(null, {
       _id: jwt_payload._id,
-      userName: jwt_payload.userName,
-      fullName: jwt_payload.fullName,
-      role: jwt_payload.role,
+      userName: jwt_payload.userName
+
     });
   } else {
     next(null, false);
@@ -56,18 +55,17 @@ app.post("/api/user/register", (req, res) => {
 });
 
 app.post("/api/user/login",  (req, res) => {
-    let payload = {
-        _id: user._id,
-        userName: user.userName,
-      };
-      
-      let token = jwt.sign(payload, jwtOptions.secretOrKey);
-
     userService.checkUser(req.body)
     .then((user) => {
-        res.json({ "message": "login successful", token: token});
+        let payload = {
+            _id: user._id,
+            userName: user.userName
+          };
+          
+          let token = jwt.sign(payload, jwtOptions.secretOrKey);   
+        res.json({ message: "login successful", token : token});
     }).catch(msg => {
-        res.status(422).json({ "message": msg });
+        res.status(422).json({ message: msg });
     });
 });
 
